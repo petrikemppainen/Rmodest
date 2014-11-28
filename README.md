@@ -1,4 +1,4 @@
-R-package: MODEST
+R-package: Rmodest
 -------------
 
 Integrates results across replicated STRUCTURE runs spanning a large rang of K values.
@@ -10,7 +10,7 @@ WORK IN PROGRESS
 
 With **devtools** (accessible from CRAN) **MODEST** can be installed by:
 ```r
-devtools::install_github("petrikemppainen/MODEST")
+devtools::install_github("petrikemppainen/Rmodest")
 ```
 This downloads the source directly from **github** and builds the vignettes and thus requires LaTeX to be installed on your computer.
 

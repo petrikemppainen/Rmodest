@@ -3,15 +3,10 @@
 \alias{getQdist}
 \title{Calculates distances between all pairwise Qcolumns}
 \usage{
-getQdist(modest, method = "G_test", scaled = TRUE,
-  mc.cores = getOption("cores"))
+getQdist(modest, mc.cores = getOption("mc.cores"))
 }
 \arguments{
 \item{modest}{A file produced by \code{importData} that contains parsed data from replicate STRUCTURE runs}
-
-\item{method}{Distance measure, either based on an explicit mode (\code{explicit_model}), the likelihood ratio test (\code{G_test}) or the Pearson distance {\code{Pearson}}}
-
-\item{scaled}{By default the distance measure is scaled between 0 and 1, but can be turned off (\code{FALSE})}
 
 \item{mc.cores}{The number of cores to use, i.e. how many processes will be spawned (at most). By default all available cores are used.}
 }
@@ -22,11 +17,12 @@ An upper diagonal matrix with pairwise distances
 Based on information produced by \code{\link{importData}}, \code{\link{getQdist}} calculates distances between all pairwise Q-columns
 }
 \details{
-The method \code{Pearson} is the fastest but is only based on the Q-values instead of the allele counts for all loci in the data set and is thereore likely to be missleading. Use this option only for quick testing. More info to come.
+More info to come.
 }
 \examples{
+\dontrun{
 data(MODEST)
-Qdist <- getQdist(modest_MCMV, "Pearson")
+Qdist <- getQdist(modest_MCMV)}
 }
 \author{
 Petri Kemppainen \email{petrikemppainen2@gmail.com}

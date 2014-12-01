@@ -10,6 +10,8 @@
 #' @param threshold If `merge.by="Qdist"`, threshold gives the minimum value for the distance below which Q-columns are merged expressed as fraction of the maximum distance in the data set (default=0.05).
 #' @return returns an edge list representing the KDAG
 #' @export
+#' @import igraph
+#' @import ape
 #' @keywords Qdist2KDAG, getQdist
 #' @author Petri Kemppainen, \email{petrikemppainen2@@gmail.com} and Stuart Baird, \email{stuartj.e.baird@@gmail.com}
 #' @examples

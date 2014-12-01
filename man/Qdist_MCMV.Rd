@@ -7,7 +7,7 @@
 Qdist_MCMV
 }
 \description{
-Pairwise distances based on the G-test (\code{\link{likelihood.test}} from the \code{\link{Deducer}} package) produced by function \code{\link{getQdist}}.
+Pairwise distances based on the G-test (\code{likelihood.test} from the \code{Deducer} package) produced by function \code{\link{getQdist}}.
 }
 \author{
 Petri Kemppainen \email{petrikemppainen2@gmail.com}

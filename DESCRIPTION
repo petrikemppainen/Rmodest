@@ -10,10 +10,10 @@ Description: To be added
 License: GPL (>= 2)
 Depends:
     R (>= 3.0.2),
-    ape,
     igraph,
+    ape
+Imports:
     parallel,
-    Deducer,
-    gtools
+    Deducer
 Suggests:
     knitr

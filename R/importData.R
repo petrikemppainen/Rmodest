@@ -24,12 +24,15 @@
 #' \dontrun{
 #' modest <- importData("path/to/folder/with/f_files")}
 
+
 importData <- function(input.data.folder){
   if(read.fwf(textConnection(input.data.folder), widths=c(nchar(input.data.folder)-1, nchar(input.data.folder)))[2] != "/"){
     input.data.folder <- paste(input.data.folder, "/", sep="")
   }
   # end check format
   input.files <- paste(input.data.folder, list.files(input.data.folder),sep="")
+  
+  ############## get allele counts which are used for calculating Qdist ############
   out <- list()
   inp <- suppressWarnings(readLines(input.files[1]))
   Nind <- as.numeric(gsub(" individuals", "", inp[grep(" individuals",inp)][1]))
@@ -57,12 +60,12 @@ importData <- function(input.data.folder){
       one_pop <- c(one_pop, i)
     }
   }
-  
+  #options(warn=2)
   #Get counts
   if(is.null(one_pop)){
-    allele_counts <- do.call('cbind', lapply(out, function(y) do.call('rbind', lapply(y, function(x) round(x[[2]]*Nind*(1-x[[1]])*2)))))
+    allele_counts <- do.call('cbind', lapply(out, function(y) do.call('rbind', lapply(y, function(x) x[[2]]*Nind*(1-x[[1]])*2))))
   }else{
-    allele_counts <- do.call('cbind', lapply(out[-one_pop], function(y) do.call('rbind', lapply(y, function(x) round(x[[2]]*Nind*(1-x[[1]])*2)))))
+    allele_counts <- do.call('cbind', lapply(out[-one_pop], function(y) do.call('rbind', lapply(y, function(x) x[[2]]*Nind*(1-x[[1]])*2))))
   }
   colnames(allele_counts) <- c(1:ncol(allele_counts))
   rownames(allele_counts) <- rep(1:length(Nalleles), Nalleles)

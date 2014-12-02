@@ -3,16 +3,14 @@
 \alias{Qdist2KDAG}
 \title{Parses STRUCTURE output to a K-directed acyclig graph (KDAG)}
 \usage{
-Qdist2KDAG(Qdist, K, merge.by = "topology", threshold = 0.05)
+Qdist2KDAG(Qdist, K, threshold = 0.05)
 }
 \arguments{
 \item{Qdist}{A matrix of pairwise distanances between Q-columns produced by \code{\link{getQdist}}}
 
 \item{K}{A vector of K's for each Qcolumn in \code{Qcols}}
 
-\item{merge.by}{Weather to merge by topology or by Qdist}
-
-\item{threshold}{If `merge.by="Qdist"`, threshold gives the minimum value for the distance below which Q-columns are merged expressed as fraction of the maximum distance in the data set (default=0.05).}
+\item{threshold}{Gives the minimum value for the distance below which Q-columns are merged, expressed as fraction of the maximum distance between any two Q-columns (clusters) in the data set (default=0.05).}
 }
 \value{
 returns an edge list representing the KDAG
@@ -25,10 +23,13 @@ More info to come
 }
 \examples{
 data(MODEST)
-KDAG <- Qdist2KDAG(Qdist_MCMV, modest_MCMV$K, merge.by="Qdist")
+KDAG <- Qdist2KDAG(Qdist_MCMV, modest_MCMV$K)
 }
 \author{
 Petri Kemppainen, \email{petrikemppainen2@gmail.com} and Stuart Baird, \email{stuartj.e.baird@gmail.com}
+}
+\seealso{
+\code{\link{getQdist}} and \code{\link{plotKDAG}}
 }
 \keyword{Qdist2KDAG,}
 \keyword{getQdist}

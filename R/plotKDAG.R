@@ -12,6 +12,7 @@
 #' @param intensities To come
 #' @param plot.PCA To come
 #' @param hue.saturation To come
+#' @param use.rgb Color vertices by the three first axes of RGB space
 #' @keywords plotKDAG, plotDAG, STRUCTURE, importData, getQdist
 #' @seealso \code{\link{importData}}, \code{\link{getQdist}} and \code{\link{Qdist2KDAG}}
 #' @return a list with the following objects. \code{vertices}: a list with each vertex in the DAG as an object containing index of each Q-column that have been merged into that vertex. \code{K_vertices}: the K for each vertex in file \code{vertices}. \code{color}: a vector of color codes that were used for each vertex in the KDAG plot.
@@ -19,10 +20,11 @@
 #' @export
 #' @examples
 #' data(MODEST)
-#' KDAG <- Qdist2KDAG(Qdist_MCMV, modest_MCMV$K, merge.by="topology")
+#' KDAG <- Qdist2KDAG(Qdist_MCMV, modest_MCMV$K)
 #' plotKDAG(modest_MCMV, Qdist_MCMV, KDAG) # default, more options available
 
-plotKDAG <- function(modest, Qdist, KDAG, min.vertex.size=4, max.vertex.size=20, intensities=c(1, 0.6, 0.3), plot.PCA=NULL, hue.saturation=c(1,2)){
+
+plotKDAG <- function(modest, Qdist, KDAG, min.vertex.size=4, max.vertex.size=20, intensities=c(1, 0.6, 0.3), plot.PCA=NULL, hue.saturation=c(1,2), use.rgb=FALSE){
   NinR <- modest$NinR
   NinK <- modest$NinK
   K <- modest$K
@@ -56,57 +58,64 @@ plotKDAG <- function(modest, Qdist, KDAG, min.vertex.size=4, max.vertex.size=20,
   dimnames(means) <- list(names(new_vertices[which.to.use]), names(new_vertices[which.to.use]))
   
   PCA <- pcoa(as.dist(t(means)), correction="none", rn=NULL)
-  PCA$vectors[,1:2] <- apply(PCA$vectors[,1:2], 2, function(x) (x - min(x))/diff(range(x)))
-  
-  ########## prep intensity
-  ## get modes
+  PCA$vectors[,1:3] <- apply(PCA$vectors[,1:3], 2, function(x) (x - min(x))/diff(range(x)))
   vertices <- new_vertices[which.to.use]
   K_vertices <- sapply(vertices, function(x) unique(K[x]))
-  modes <- list()
-  i <- 6
-  for(i in unique(K_vertices)-1){
-    vertices.temp <- vertices[K_vertices==i+1]
-    vertices.rep <- lapply(vertices.temp, function(x) rep[x])
-    vertices.rep.unique <- unique(unlist(vertices.rep))
-    modes.temp <- sapply(vertices.rep.unique, function(x) paste(sort(names(vertices.rep)[sapply(vertices.rep, function(y) any(y==x))]), collapse=","))
-    mode.table <- table(modes.temp)
-    mode.table <- mode.table[rev(order(mode.table))]
-    temp <-  strsplit(names(mode.table), ",")
-    temp <- lapply(temp, as.numeric)
-    names(temp) <- as.vector(mode.table)
-    modes[[i]] <- temp
-  }
-  names(modes) <- unique(K_vertices)
   
-  #get intensity 
-  intensity <-  rep(NA, length(V(g)))
-  pre.int <- intensities
-  
-  for(i in 1:length(modes)){
-    to.color <- as.vector(unlist(modes[[i]]))
-    names.temp <- names(modes[[i]])
-    counts <- unique(names.temp)  
-    for(j in 1:length(names.temp)){
-      temp <- intensity[unlist(modes[[i]][names.temp==names.temp[j]])]
-      new.vert <- unlist(modes[[i]][names.temp==names.temp[j]])[is.na(temp)]
-      if(length(counts)==2){
-        intensity[new.vert] <- pre.int[if(j<2) j else 3]
-      }else{
-        intensity[new.vert] <- pre.int[if(j<3) j else 3]
+  if(use.rgb==FALSE){
+    ########## prep intensity
+    ## get modes
+    
+    modes <- list()
+    i <- 6
+    for(i in unique(K_vertices)-1){
+      vertices.temp <- vertices[K_vertices==i+1]
+      vertices.rep <- lapply(vertices.temp, function(x) rep[x])
+      vertices.rep.unique <- unique(unlist(vertices.rep))
+      modes.temp <- sapply(vertices.rep.unique, function(x) paste(sort(names(vertices.rep)[sapply(vertices.rep, function(y) any(y==x))]), collapse=","))
+      mode.table <- table(modes.temp)
+      mode.table <- mode.table[rev(order(mode.table))]
+      temp <-  strsplit(names(mode.table), ",")
+      temp <- lapply(temp, as.numeric)
+      names(temp) <- as.vector(mode.table)
+      modes[[i]] <- temp
+    }
+    names(modes) <- unique(K_vertices)
+    
+    #get intensity 
+    intensity <-  rep(NA, length(V(g)))
+    pre.int <- intensities
+    
+    for(i in 1:length(modes)){
+      to.color <- as.vector(unlist(modes[[i]]))
+      names.temp <- names(modes[[i]])
+      counts <- unique(names.temp)  
+      for(j in 1:length(names.temp)){
+        temp <- intensity[unlist(modes[[i]][names.temp==names.temp[j]])]
+        new.vert <- unlist(modes[[i]][names.temp==names.temp[j]])[is.na(temp)]
+        if(length(counts)==2){
+          intensity[new.vert] <- pre.int[if(j<2) j else 3]
+        }else{
+          intensity[new.vert] <- pre.int[if(j<3) j else 3]
+        }
       }
     }
+    intensity <- intensity[which.to.use]
+    
+    ##### get colors
+    #hue.saturation <- c(2,1)
+    Colors <- sapply(1:nrow(PCA$vectors), function(x) hsv(0.05+PCA$vectors[x,hue.saturation[1]]*0.95, 0.05+PCA$vectors[x,hue.saturation[2]]*0.95, intensity[x], 1))
+    names(Colors) <- V(g)$name[which.to.use]
+    
+  }else{
+    Colors <- rgb(PCA$vectors[,1:3])
+    names(Colors) <- V(g)$name[which.to.use]
   }
-  intensity <- intensity[which.to.use]
   
   ############### plot PCA
   if(!is.null(plot.PCA)){
-    Colors <- sapply(1:nrow(PCA$vectors), function(x) hsv(0.05+PCA$vectors[x,1]*0.95, 0.05+PCA$vectors[x,2]*0.95, 1, 1))
     plot(PCA$vectors[,plot.PCA], bg=Colors, pch=21, cex=2, col="black")
   }
-  ##### get colors
-  #hue.saturation <- c(2,1)
-  Colors <- sapply(1:nrow(PCA$vectors), function(x) hsv(0.05+PCA$vectors[x,hue.saturation[1]]*0.95, 0.05+PCA$vectors[x,hue.saturation[2]]*0.95, intensity[x], 1))
-  names(Colors) <- V(g)$name[which.to.use]
   
   ##########
   type <- V(g)$name
@@ -173,3 +182,5 @@ modifyKDAG_corr <- function(MDAG, K){
   }
   DAG.temp
 }
+
+

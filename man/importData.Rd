@@ -16,7 +16,7 @@ Returns a list with the following objects:
  \item \code{K}:  K (asssumed number of populations) for each Q-column in \code{Qcols} and \code{allele_counts}
  \item \code{NinK}:  Index of each Q-column within K
  \item \code{NinR}:  Index of each Q-column within a STRUCTURE run/replicate
- \item \code{f_file}:  The filen name from which a Q-column was extracted from
+ \item \code{f_file}:  The name of the file from which the Q-column was extracted from
  \item \code{file_nr}:  The unique number identifier for each Qcolumn extracted from \code{f_file}
 }
 }

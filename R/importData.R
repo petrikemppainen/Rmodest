@@ -15,7 +15,7 @@
 #'  \item \code{K}:  K (asssumed number of populations) for each Q-column in \code{Qcols} and \code{allele_counts}
 #'  \item \code{NinK}:  Index of each Q-column within K
 #'  \item \code{NinR}:  Index of each Q-column within a STRUCTURE run/replicate
-#'  \item \code{f_file}:  The filen name from which a Q-column was extracted from
+#'  \item \code{f_file}:  The name of the file from which the Q-column was extracted from
 #'  \item \code{file_nr}:  The unique number identifier for each Qcolumn extracted from \code{f_file}
 #' }
 #' @author Petri Kemppainen \email{petrikemppainen2@@gmail.com}
@@ -26,20 +26,24 @@
 
 
 importData <- function(input.data.folder){
+  ### check and prepare format ###
+  
   if(read.fwf(textConnection(input.data.folder), widths=c(nchar(input.data.folder)-1, nchar(input.data.folder)))[2] != "/"){
     input.data.folder <- paste(input.data.folder, "/", sep="")
   }
   # end check format
   input.files <- paste(input.data.folder, list.files(input.data.folder),sep="")
   
-  ############## get allele counts which are used for calculating Qdist ############
+  
+  ### get allele counts which are used for calculating Qdist ###
   out <- list()
   inp <- suppressWarnings(readLines(input.files[1]))
   Nind <- as.numeric(gsub(" individuals", "", inp[grep(" individuals",inp)][1]))
   rstarts <- grep("Locus",inp)+1
   Nalleles <- as.numeric(gsub(" alleles", "",inp[rstarts]))
   one_pop <- NULL
-  # get allele frequencies
+  
+  ### get allele frequencies
   for(i in 1:length(input.files)){
     inp <- suppressWarnings(readLines(input.files[i]))
     rstarts <- grep("Locus",inp)+1
@@ -60,8 +64,8 @@ importData <- function(input.data.folder){
       one_pop <- c(one_pop, i)
     }
   }
-  #options(warn=2)
-  #Get counts
+  
+  ###  Get counts
   if(is.null(one_pop)){
     allele_counts <- do.call('cbind', lapply(out, function(y) do.call('rbind', lapply(y, function(x) x[[2]]*Nind*(1-x[[1]])*2))))
   }else{
@@ -69,7 +73,9 @@ importData <- function(input.data.folder){
   }
   colnames(allele_counts) <- c(1:ncol(allele_counts))
   rownames(allele_counts) <- rep(1:length(Nalleles), Nalleles)
-  ########################## get Qcols.raw, this code is written by Benny Borremans
+  
+  
+  ### get Qcols.raw, the core of this code is written by Benny Borremans ###
   Qcols.raw <- list()
   for(i in 1:length(input.files)){
     inp <- suppressWarnings(readLines(input.files[i]))
@@ -85,9 +91,12 @@ importData <- function(input.data.folder){
     dat.export$Label <- as.character(dat.export$Label)
     Qcols.raw[[i]]<- dat.export
   }
-  ######################### get Qcols
+  
+  
+  
+  ### get Qcols and additional information necessary for modoest analyses ###
   fColnames <- lapply(Qcols.raw, function(x) colnames(x))
-  extractIndex <- lapply(fColnames, function(y) which(sapply(strsplit(y, "", fixed=T), function(x) x[1])=="C")) # get which columns are Qcolumns
+  extractIndex <- lapply(fColnames, function(y) which(sapply(strsplit(y, "", fixed=T), function(x) x[1])=="C"))
   temp <- lapply(1:length(extractIndex), function(x) Qcols.raw[[x]][,extractIndex[[x]]])
   Qcols <- do.call('cbind', temp)
   temp2 <- sapply(temp, ncol)
@@ -102,7 +111,8 @@ importData <- function(input.data.folder){
   Qcols <- Qcols[,K!=1]
   Qcols <- as.matrix(Qcols)
   K <- K[K!=1]
-  #### order, filenames must contain unique numbers...
+  
+  ### order, filenames must contain unique numbers... ###
   temp <- gsub("[[:alpha:]]", "", f_file)
   file_nr <- suppressWarnings(as.numeric(gsub("[[:punct:]]", "", temp)))
   new.order <- order(K, file_nr)
@@ -112,7 +122,8 @@ importData <- function(input.data.folder){
   f_file <- f_file[new.order]
   file_nr <- file_nr[new.order]
   K <- K[new.order]
-  x <- 
+  
+  #### prepare output ###
   NinR <- unlist(sapply(unique(file_nr), function(x) c(1:length(file_nr[file_nr==x]))))
   NinK <- unlist(sapply(unique(K), function(x) c(1:length(K[K==x]))))
   out <- list(Qcols, allele_counts, K, NinR, NinK, f_file, file_nr)

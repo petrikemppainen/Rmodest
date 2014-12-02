@@ -4,7 +4,8 @@
 \title{Plots K-directed acyclic graph (KDAG)}
 \usage{
 plotKDAG(modest, Qdist, KDAG, min.vertex.size = 4, max.vertex.size = 20,
-  intensities = c(1, 0.6, 0.3), plot.PCA = NULL, hue.saturation = c(1, 2))
+  intensities = c(1, 0.6, 0.3), plot.PCA = NULL, hue.saturation = c(1, 2),
+  use.rgb = FALSE)
 }
 \arguments{
 \item{modest}{A file produced by \code{importData} that contains parsed data from replicate STRUCTURE runs}
@@ -22,6 +23,8 @@ plotKDAG(modest, Qdist, KDAG, min.vertex.size = 4, max.vertex.size = 20,
 \item{plot.PCA}{To come}
 
 \item{hue.saturation}{To come}
+
+\item{use.rgb}{Color vertices by the three first axes of RGB space}
 }
 \value{
 a list with the following objects. \code{vertices}: a list with each vertex in the DAG as an object containing index of each Q-column that have been merged into that vertex. \code{K_vertices}: the K for each vertex in file \code{vertices}. \code{color}: a vector of color codes that were used for each vertex in the KDAG plot.
@@ -34,7 +37,7 @@ To come
 }
 \examples{
 data(MODEST)
-KDAG <- Qdist2KDAG(Qdist_MCMV, modest_MCMV$K, merge.by="topology")
+KDAG <- Qdist2KDAG(Qdist_MCMV, modest_MCMV$K)
 plotKDAG(modest_MCMV, Qdist_MCMV, KDAG) # default, more options available
 }
 \author{

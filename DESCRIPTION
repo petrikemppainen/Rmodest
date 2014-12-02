@@ -4,7 +4,8 @@ Title: Integrates results across replicated STRUCTURE runs spanning a large
     rang of K values
 Version: 0.51
 Date: 2014-10-22
-Author: Petri Kemppainen, Stuart Baird, Sofie Gryseels, Benny Borremans, Joelle Gouy de Bellocq
+Author: Petri Kemppainen, Stuart Baird, Sofie Gryseels, Benny Borremans, Joelle
+    Gouy de Bellocq
 Maintainer: <petrikemppainen2@gmail.com>
 Description: To be added
 License: GPL (>= 2)

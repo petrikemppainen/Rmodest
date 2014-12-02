@@ -8,26 +8,31 @@ plotKDAG(modest, Qdist, KDAG, min.vertex.size = 4, max.vertex.size = 20,
   use.rgb = FALSE)
 }
 \arguments{
-\item{modest}{A file produced by \code{importData} that contains parsed data from replicate STRUCTURE runs}
+\item{modest}{a file produced by \code{importData} that contains parsed data from replicate STRUCTURE runs}
 
-\item{Qdist}{A file produced by \code{getQdist} that contains all pairwise distances between the Q-columns in file \code{modest}}
+\item{Qdist}{a file produced by \code{getQdist} that contains all pairwise distances between the Q-columns in file \code{modest}}
 
-\item{KDAG}{A file produced by \code{Qdist2KDAG} that contains an edge list describing a KDAG.}
+\item{KDAG}{a file produced by \code{Qdist2KDAG} that contains an edge list describing a KDAG.}
 
-\item{min.vertex.size}{To come}
+\item{min.vertex.size}{minimum size to be used for any vertex (default=4)}
 
-\item{max.vertex.size}{To come}
+\item{max.vertex.size}{maximum size to be used for any vertex (default=20)}
 
-\item{intensities}{To come}
+\item{intensities}{can be used to indicate which vertices represent Q-colums that only occur in rare modes. Is a vector with three numbers; the first give the intensity for the most common run mode, the second for the second most common run mode and the third for the third (or lower) most common rund mode. Default is c(1, 0.6, 0.3). The parameter \code{use.rgb} needs to be set to \code{FALSE}.}
 
-\item{plot.PCA}{To come}
+\item{plot.PCA}{a vector defining which two axes to plot of the PCA. If \code{NULL} (default) no plot is printed.}
 
-\item{hue.saturation}{To come}
+\item{hue.saturation}{if \code{use.rgb} is \code{FALSE}, this parameter can be used to decide which of the two first axes of the PCA is used for hue and saturation, respectively. Default is c(1,2) meaning that the first axes is used to decide hue for the a vertex and the second is used for saturaton.}
 
-\item{use.rgb}{Color vertices by the three first axes of RGB space}
+\item{use.rgb}{if \code{TRUE} color of vertices is defined by their separation along the three first axes of the PCA in RGB space.}
 }
 \value{
-a list with the following objects. \code{vertices}: a list with each vertex in the DAG as an object containing index of each Q-column that have been merged into that vertex. \code{K_vertices}: the K for each vertex in file \code{vertices}. \code{color}: a vector of color codes that were used for each vertex in the KDAG plot.
+a list with the following objects:
+\itemize{
+ \item \code{vertices}: a list with each vertex in the DAG as an object containing index of each Q-column that have been merged into that vertex.
+ \item \code{K_vertices}: the K for each vertex in file \code{vertices}.
+ \item \code{color}: a vector of color codes for each vertex.
+ }
 }
 \description{
 Plots KDAG based on information produced by \code{\link{importData}}, \code{\link{getQdist}} and \code{\link{Qdist2KDAG}} and exports vertex information for function \code{\link{plotHist}}.
